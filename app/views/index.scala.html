@@ -1,7 +1,21 @@
-@()
+@()(implicit request: RequestHeader)
 
 @main("Welcome to Akka Chat") {
 	<script type='text/javascript' src='@routes.Assets.at("javascripts/index.js")'></script>
 
     <h1>Akka Chat</h1>
+
+    <div id="mainChat">
+
+
+
+    </div>
+    <div id="chatControls">
+        <form id="sendForm">
+            <input type="text" name="chatText" id="chatText">
+            <button id="btnSend" class="btn-small btn-success">Send</button>
+        </form>
+    </div>
+
+
 }
