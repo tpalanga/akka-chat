@@ -24,7 +24,7 @@ class User(client: ActorRef) extends Actor with ActorLogging {
 
     case message: JsValue =>
       val chatRoomId = (message \ "roomId").as[Int]
-      val messageText = (message \ "text").as[String]
+      val messageText = (message \ "message").as[String]
       ChatManager.ref ! ChatRoom.Text(chatRoomId, userName, messageText)
 
 
@@ -34,9 +34,14 @@ class User(client: ActorRef) extends Actor with ActorLogging {
       val message = Json.obj(
         "type" -> "chatmessage",
         "sender" -> userName,
-        "msg" -> text
+        "message" -> text
       )
       client ! message
 
+  }
+
+  override def postStop(): Unit = {
+    super.postStop()
+    ChatManager.ref ! ChatRoom.Leave(userName)
   }
 }

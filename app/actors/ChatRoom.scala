@@ -38,7 +38,6 @@ class ChatRoom(id: Int) extends Actor with ActorLogging {
       users.foreach(_ ! Text(id, SENDER_SYS, s"User $userName has left the chat"))
 
     case textMessage @ Text(roomId, user, msg) =>
-      users = users - sender()
       users.filter(_ != sender())
         .foreach(_ ! textMessage)
   }
