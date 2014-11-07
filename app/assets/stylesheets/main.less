@@ -2,13 +2,42 @@ body {
   margin-top: 20px;
 }
 
-#mainChat {
-  width: 500px;
+.chatContainers {
   height: 300px;
   margin: 10px;
   border: 1px solid gray;
   background: #fff3e9;
   overflow: auto;
+}
+
+#mainChat {
+  width: 500px;
+  .chatContainers;
+  float: left;
+}
+
+.chatLabel {
+  height: 20px;
+  margin: 0px 10px;
+  float: left;
+}
+#mainChatLabel {
+  width: 500px;
+  .chatLabel;
+}
+
+#userContainer {
+  width: 150px;
+  .chatContainers;
+  float: left;
+}
+#userContainerLabel {
+  width: 150px;
+  .chatLabel;
+}
+
+.floatClear {
+  clear: both;
 }
 
 #chatControls {
@@ -33,4 +62,6 @@ body {
 .message {
 
 }
-
+.myNickname {
+  font-weight: bold;
+}
