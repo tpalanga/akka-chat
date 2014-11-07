@@ -20,12 +20,18 @@ class User(client: ActorRef) extends Actor with ActorLogging {
 
   def doWelcome = {
     client ! Json.obj("msg" -> initMessage)
-    val nickMessage = Json.obj(
+    val welcomeMessage = Json.obj(
       "type" -> "chatmessage",
       "sender" -> ChatRoom.SENDER_SYS,
-      "message" -> s"Your nickname is $userName"
+      "message" -> s"Welcome to Akka Chat. Your nickname is $userName"
+    )
+    client ! welcomeMessage
+    val nickMessage = Json.obj(
+      "type" -> "setnickname",
+      "nickname" -> userName
     )
     client ! nickMessage
+
     ChatManager.ref ! Join(userName)
     log.debug(s"user $userName joined")
   }

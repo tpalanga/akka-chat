@@ -11,6 +11,8 @@ $ ->
         updateChat(message)
       when "userlist"
         updateUserList(message)
+      when "setnickname"
+        setNickname(message)
       else
         console.log(message)
 
@@ -27,8 +29,6 @@ populateChatHistory = (message) ->
   console.log(message)
 
 updateChat = (message) ->
-  console.log("updateChat()")
-  console.log(message)
   msg = $("<span>").addClass("message").text(message.message)
   sender = $("<span>").addClass("sender").text(message.sender + ": ")
   msgContainer = $("<div>").addClass("messageContainer").append(sender).append(msg)
@@ -36,10 +36,17 @@ updateChat = (message) ->
   $("#mainChat").prop("scrollTop", $("#mainChat").prop("scrollHeight"))
 
 updateUserList = (message) ->
-  console.log("updateUserList()")
-  console.log(message)
-
   $("#userContainer").empty()
+  $("#userContainer").append(
+    $("<div>").addClass("userName")
+      .toggleClass("myNickname", isItMe(user))
+      .text(user)
+  ) for user in message.users
 
-  $("#userContainer").append($("<div>").addClass("userName").text(user)) for user in message.users
+setNickname = (message) ->
+  window.myNickname = message.nickname
+  console.log("set window.myNickname: " + window.myNickname)
 
+isItMe = (nickname) ->
+  console.log("window.myNickname: " + window.myNickname)
+  return window.myNickname == nickname
