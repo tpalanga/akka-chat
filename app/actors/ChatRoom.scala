@@ -1,6 +1,5 @@
 package actors
 
-import akka.actor.Actor.Receive
 import akka.actor.{ActorLogging, ActorRef, Actor, Props}
 
 /**
@@ -16,6 +15,7 @@ object ChatRoom {
   case class Leave(user: String) extends ChatMessage
   case class JoinRoom(roomId: Int) extends ChatMessage
   case class Text(roomId: Int, sender: String, text: String) extends ChatMessage
+  case class UserList(users: Set[String])
 
   val SENDER_SYS = "[SYSTEM]"
 }
@@ -25,20 +25,25 @@ class ChatRoom(id: Int) extends Actor with ActorLogging {
   import ChatRoom._
   log.debug(s"Created room $id")
 
-  var users: Set[ActorRef] = Set.empty
+  var users: Map[String, ActorRef] = Map.empty
 
   override def receive = {
     case Join(userName) =>
       log.debug(s"User $userName has joined the chat")
-      users = users + sender()
-      users.foreach(_ ! Text(id, SENDER_SYS, s"User $userName has joined the chat"))
+      users = users + (userName -> sender())
+      users.values.foreach( user => {
+        user ! Text(id, SENDER_SYS, s"User $userName has joined the chat")
+        user ! UserList(users.keys.toSet)
+      })
 
     case Leave(userName) =>
-      users = users - sender()
-      users.foreach(_ ! Text(id, SENDER_SYS, s"User $userName has left the chat"))
+      users = users - userName
+      users.values.foreach(_ ! Text(id, SENDER_SYS, s"User $userName has left the chat"))
 
     case textMessage @ Text(roomId, user, msg) =>
-      users.filter(_ != sender())
+      users.filterKeys(_ != user)
+        .values
         .foreach(_ ! textMessage)
+
   }
 }

@@ -1,12 +1,8 @@
 package controllers
 
 import actors.User
-import play.api._
 import play.api.mvc._
-import play.api.data.Form
-import play.api.data.Forms._
-import play.api.libs.json.{JsValue, Json}
-import models._
+import play.api.libs.json.{JsValue}
 import play.api.Play.current
 
 object Application extends Controller {
