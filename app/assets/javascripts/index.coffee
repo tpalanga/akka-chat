@@ -31,4 +31,4 @@ updateChat = (message) ->
   sender = $("<span>").addClass("sender").text(message.sender + ": ")
   msgContainer = $("<div>").addClass("messageContainer").append(sender).append(msg)
   $("#mainChat").append(msgContainer)
-
+  $("#mainChat").prop("scrollTop", $("#mainChat").prop("scrollHeight"))
