@@ -2,13 +2,27 @@ body {
   margin-top: 20px;
 }
 
-#mainChat {
-  width: 500px;
+.chatContainers {
   height: 300px;
   margin: 10px;
   border: 1px solid gray;
   background: #fff3e9;
   overflow: auto;
+}
+
+#mainChat {
+  width: 500px;
+  .chatContainers;
+  float: left;
+}
+
+#userContainer {
+  width: 150px;
+  .chatContainers;
+  float: left;
+}
+.floatClear {
+  clear: both;
 }
 
 #chatControls {

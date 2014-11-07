@@ -1,5 +1,6 @@
 package actors
 
+import actors.ChatRoom._
 import akka.actor.{ActorLogging, Props, ActorRef, Actor}
 import play.api.libs.json.{JsValue, Json}
 
@@ -14,11 +15,20 @@ object User {
 class User(client: ActorRef) extends Actor with ActorLogging {
   val path = self.path
   val initMessage = s"WebSocket connection has been established for user $path"
-  client ! Json.obj("msg" -> initMessage)
   val userName = "user_" + path.toStringWithoutAddress.replaceAll("[a-z/]", "")
-  ChatManager.ref ! ChatRoom.Join(userName)
-  log.debug(s"user $userName joined")
+  doWelcome
 
+  def doWelcome = {
+    client ! Json.obj("msg" -> initMessage)
+    val nickMessage = Json.obj(
+      "type" -> "chatmessage",
+      "sender" -> ChatRoom.SENDER_SYS,
+      "message" -> s"Your nickname is $userName"
+    )
+    client ! nickMessage
+    ChatManager.ref ! Join(userName)
+    log.debug(s"user $userName joined")
+  }
 
   override def receive: Receive = {
 
@@ -27,14 +37,18 @@ class User(client: ActorRef) extends Actor with ActorLogging {
       val messageText = (message \ "message").as[String]
       ChatManager.ref ! ChatRoom.Text(chatRoomId, userName, messageText)
 
-
-    case ChatRoom.Leave => ???
-
-    case ChatRoom.Text(roomId, userName, text) =>
+    case Text(roomId, userName, text) =>
       val message = Json.obj(
         "type" -> "chatmessage",
         "sender" -> userName,
         "message" -> text
+      )
+      client ! message
+
+    case UserList(users) =>
+      val message = Json.obj(
+        "type" -> "userlist",
+        "users" -> users
       )
       client ! message
 

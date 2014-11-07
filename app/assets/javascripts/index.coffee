@@ -9,6 +9,8 @@ $ ->
         populateChatHistory(message)
       when "chatmessage"
         updateChat(message)
+      when "userlist"
+        updateUserList(message)
       else
         console.log(message)
 
@@ -32,3 +34,12 @@ updateChat = (message) ->
   msgContainer = $("<div>").addClass("messageContainer").append(sender).append(msg)
   $("#mainChat").append(msgContainer)
   $("#mainChat").prop("scrollTop", $("#mainChat").prop("scrollHeight"))
+
+updateUserList = (message) ->
+  console.log("updateUserList()")
+  console.log(message)
+
+  $("#userContainer").empty()
+
+  $("#userContainer").append($("<div>").addClass("userName").text(user)) for user in message.users
+
