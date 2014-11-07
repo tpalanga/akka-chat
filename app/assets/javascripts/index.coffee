@@ -38,9 +38,7 @@ updateChat = (message) ->
 updateUserList = (message) ->
   $("#userContainer").empty()
   $("#userContainer").append(
-    $("<div>").addClass("userName")
-      .toggleClass("myNickname", isItMe(user))
-      .text(user)
+    $("<div>").addClass("userName").toggleClass("myNickname", isItMe(user)).text(user)
   ) for user in message.users
 
 setNickname = (message) ->
