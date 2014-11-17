@@ -1,3 +1,5 @@
+import java.util.concurrent.TimeUnit
+
 import actors.{ChatRoom, User}
 import akka.actor.ActorSystem
 import akka.testkit.{ImplicitSender, TestActorRef, TestKit, TestProbe}
@@ -6,8 +8,10 @@ import org.specs2.mutable.Specification
 import org.specs2.runner.JUnitRunner
 import org.specs2.specification.{AfterExample, Scope}
 import play.api.Logger
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.test.WithApplication
+
+import scala.concurrent.duration.Duration
 
 
 /**
@@ -28,6 +32,37 @@ class ActorSpec extends Specification {
   sequential
 
   "User actor" should {
+
+    "message to all in room" in new Actors {
+      new WithApplication {
+        Logger.logger.debug("running scenario - message to all in room")
+        val clientProbe = new TestProbe(system)
+        val client = clientProbe.ref
+        val user = TestActorRef[User](User.props(client), "100")
+
+        val client2Probe = new TestProbe(system)
+        val client2 = client2Probe.ref
+        val user2 = TestActorRef[User](User.props(client2), "101")
+
+        val txt = "test message"
+        val username = "user_100"
+        val roomId = 0
+        val msg = Json.obj("roomId" -> roomId, "message" -> txt)
+        val expectedJson = Json.obj("type" -> "chatmessage", "sender" -> username , "message" -> txt)
+
+        user.tell(msg, client)
+
+        client2Probe.fishForMessage(Duration(3, TimeUnit.SECONDS)) {
+          case msg: JsObject if msg == expectedJson => true
+          case other => {
+            Logger.logger.debug("user2Probe got message: " + other)
+            false
+          }
+        }
+
+      }
+    }
+
     "reply with connection greetings and nickname" in new Actors {
       new WithApplication {
         Logger.logger.debug("running scenario - reply with connection greetings and nickname")
