@@ -19,4 +19,4 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-mocha" % "1.0.0")
 
 resolvers += Classpaths.sbtPluginReleases
 
-addSbtPlugin("org.scoverage" %% "sbt-scoverage" % "0.99.11")
+addSbtPlugin("org.scoverage" %% "sbt-scoverage" % "1.0.0.BETA1")
