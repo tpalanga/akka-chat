@@ -2,6 +2,10 @@ $ ->
   $("#chatText").focus()
 
   ws = new WebSocket $("body").data("ws-url")
+  ws.onopen = (event) ->
+    $("#wsStatus").attr("connection", "open").text("open")
+  ws.onclose = (event) ->
+    $("#wsStatus").attr("connection", "closed").text("closed")
   ws.onmessage = (event) ->
     message = JSON.parse event.data
     switch message.type
